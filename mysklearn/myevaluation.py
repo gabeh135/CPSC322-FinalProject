@@ -111,29 +111,39 @@ def stratified_kfold_split(X, y, n_splits=5, random_state=None, shuffle=False):
         Loosely based on sklearn's StratifiedKFold split():
             https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedKFold.html#sklearn.model_selection.StratifiedKFold
     """
-    np.random.seed(random_state)
-    _ = X
+    # group by for y
+    y_copy = y[:]
+    y_enum = list(enumerate(y_copy))
+    if shuffle is True:
+        y_enum, place_hold = myutils.shuffle(y_enum, random_state=random_state)
+    classes_grouped = []
+    index_grouped = []
+    for label in y_copy:
+        temp = []
+        if label not in classes_grouped:
+            for i, value in y_enum:
+                if value == label:
+                    temp.append(i)
+            classes_grouped.append(label)
+            index_grouped.append(temp)
 
-    labels = {}
-    for index, label, in enumerate(y):
-        if label not in labels:
-            labels[label] = []
-        labels[label].append(index)
-
-    if shuffle:
-        for indices in labels.values():
-            myutils.randomize_in_place(indices)
-
-    splits = [[] for _ in range(n_splits)]
-    for indices in labels.values():
-        for i, index, in enumerate(indices):
-            splits[i % n_splits].append(index)
-
-    folds = []
-    for k in range(n_splits):
-        test_indices = splits[k]
-        train_indices = [index for fold in splits if fold != splits[k] for index in fold]
-        folds.append((train_indices, test_indices))
+    instances = list(range(len(y)))
+    # get folds
+    folds = [([], []) for _ in range(n_splits)]
+    fold_ind = 0
+    for group in index_grouped:
+        for value in group:
+            folds[fold_ind][1].append(value)
+            if fold_ind < n_splits - 1:
+                fold_ind +=1
+            else:
+                fold_ind = 0
+    # get train data
+    for data in folds:
+        test = data[1]
+        for x in instances:
+            if x not in test:
+                data[0].append(x)
     return folds
 
 def bootstrap_sample(X, y=None, n_samples=None, random_state=None):
