@@ -905,7 +905,7 @@ rank,name,rating,url,location_coordinate,location_country,location_region,elevat
 904,Postwiesen Skidorf,917.5,https://www.postwiese.de/,"{'lat': '51.1817', 'long': '8.4844'}",Germany,Hochsauerlandkreis,730.0,125.0,8.0,9.0,3.0,100.0,1
 905,Laber,917.4,https://www.laber-bergbahn.de/,"{'lat': '47.5983', 'long': '11.0543'}",Germany,Garmisch-Partenkirchen,1684.0,784.0,4.0,1.0,1.0,150.0,1
 906,Klimpfjäll,917.3,https://klimpfjall.se/,"{'lat': '65.2167', 'long': '15.7167'}",Sweden,Västerbotten,804.0,206.0,9.0,3.0,9.0,200.0,1
-907,Annaberg,917.3,https://www.annaberg.info/skigebiet-annaberg,"{'lat': '47.7778', 'long': '15.3214'}",Austria,Bezirk Lilienfeld,1300.0,404.0,12.5,6.0,unknown,150.0,1
+907,Annaberg,917.3,https://www.annaberg.info/skigebiet-annaberg,"{'lat': '47.7778', 'long': '15.3214'}",Austria,Bezirk Lilienfeld,1300.0,404.0,12.5,6.0,0.0,150.0,1
 908,Blue Mountain Resort,917.3,https://www.bluemountain.ca/,"{'lat': '44.5046', 'long': '-80.3163'}",Canada,Ontario,450.0,220.0,29.0,11.0,27.0,300.0,1
 909,Ukko-Koli,917.3,https://koliski.fi/laskettele,"{'lat': '63.0833', 'long': '29.8167'}",Finland,Pohjois-Karjala,318.0,234.0,6.2,4.0,6.0,200.0,1
 910,Nayoro Piyashiri,917.2,https://www.nayoro.co.jp/piyashiri/,"{'lat': '44.3628', 'long': '142.4326'}",Japan,Hokkaido,670.0,480.0,10.0,4.0,10.0,600.0,1

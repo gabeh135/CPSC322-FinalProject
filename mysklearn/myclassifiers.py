@@ -10,6 +10,7 @@ machine learning classifiers.
 """
 import operator
 import os
+from mysklearn import myevaluation
 from mysklearn import myutils
 
 class MyKNeighborsClassifier:
@@ -247,11 +248,10 @@ class MyDecisionTreeClassifier:
     """Represents a decision tree classifier.
 
     Attributes:
-        X_train(list of list of obj): The list of training instances (samples).
-                The shape of X_train is (n_train_samples, n_features)
-        y_train(list of obj): The target y values (parallel to X_train).
-            The shape of y_train is n_samples
+        header(list of str): The attribute header
+        attribute_domains(dictionary): Which attributes are in the "domain" of each header item.
         tree(nested list): The extracted tree model.
+        subset_size(int): The random subset size, if applicable.
 
     Notes:
         Loosely based on sklearn's DecisionTreeClassifier:
@@ -261,13 +261,12 @@ class MyDecisionTreeClassifier:
     def __init__(self):
         """Initializer for MyDecisionTreeClassifier.
         """
-        self.X_train = None
-        self.y_train = None
         self.header = None
         self.attribute_domains = None
         self.tree = None
+        self.subset_size = None
 
-    def fit(self, X_train, y_train):
+    def fit(self, X_train, y_train, subset_size=None):
         """Fits a decision tree classifier to X_train and y_train using the TDIDT
         (top down induction of decision tree) algorithm.
 
@@ -276,6 +275,7 @@ class MyDecisionTreeClassifier:
                 The shape of X_train is (n_train_samples, n_features)
             y_train(list of obj): The target y values (parallel to X_train)
                 The shape of y_train is n_train_samples
+            subset_size(int): If specified, defines the number of attributes to randomly select (F)
 
         Notes:
             Since TDIDT is an eager learning algorithm, this method builds a decision tree model
@@ -286,6 +286,7 @@ class MyDecisionTreeClassifier:
             Use attribute indexes to construct default attribute names (e.g. "att0", "att1", ...).
         """
         # one of the first things I should do is programatically create attribute domains
+        self.subset_size = subset_size
         self.header = [f"att{i}" for i in range(len(X_train[0]))]
         self.attribute_domains = {self.header[index]: sorted({row[index] for row in X_train}) for index in range(len(self.header))}
 
@@ -311,16 +312,21 @@ class MyDecisionTreeClassifier:
         Args:
             instances(list of list): list of instances containing attributes
             attributes(list): list of objects available to choose from
+            subset_size(int or None): The size of the random subset of attributes to consider.
 
         Returns:
             str: the chosen attribute
         """
+        atts = attributes[:]
+        if self.subset_size:
+            atts = myutils.compute_random_subset(atts, self.subset_size)
+
         entropies = []
-        for attribute in attributes:
+        for attribute in atts:
             partitions = self.partition_instances(instances, attribute)
             entropies.append(sum(myutils.compute_partition_entropies(instances, partitions)))
 
-        return attributes[entropies.index(min(entropies))]
+        return atts[entropies.index(min(entropies))]
 
     def partition_instances(self, instances, attribute):
         """Partitions the instances by the given attribute
@@ -512,5 +518,68 @@ class MyDecisionTreeClassifier:
 
         os.popen(f"dot -Tpdf -o {pdf_fname} {dot_fname}")
 
-class MyRandomForestClassifier:
-    pass
+class MyRandomForestClassifier: 
+    """Represents a random forest classifier.
+
+    Attributes:
+        forest(list of decision trees): The generated decision trees.
+
+    Notes:
+        Loosely based on sklearn's DecisionTreeClassifier:
+            https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html
+        Terminology: instance = sample = row and attribute = feature = column
+    """
+
+    def init(self):
+        self.forest = None
+
+    def fit(self, X_train, y_train, n_samples, m_classifiers, subset_size):
+        # Generate a random stratified test set.
+        X_remainder, X_test, y_remainder, y_test = myevaluation.stratified_train_test_split(X_train, y_train, test_size=0.33, random_state=0, shuffle=True)
+
+        # Generate N decision trees using bootstrapping over the remainder set.
+        trees = []
+        accuracies = []
+        for _ in range(n_samples):
+            X_train, X_validate, y_train, y_validate = myevaluation.bootstrap_sample(X_remainder, y_remainder)
+
+            clf = MyDecisionTreeClassifier()
+
+            # At each node, decision trees by randomly selecting F of the remaining attributes as candidates to partition on.
+            clf.fit(X_train, y_train, subset_size=subset_size)
+            y_pred = clf.predict(X_validate)
+            accuracy = myevaluation.accuracy_score(y_validate, y_pred)
+            trees.append(clf)
+            accuracies.append(accuracy)
+
+        # Select the M most accurate of the N decision trees using the corresponding validation sets.
+        top_indexes = myutils.select_top_elements(trees, accuracies, m_classifiers)
+        self.forest = [trees[i] for i in top_indexes]
+
+        # Return the test set for future evaluation
+        return X_test, y_test
+
+    def predict(self, X_test):
+        """Makes predictions for test instances in X_test using majority voting.
+
+        Args:
+            X_test(list of list of obj): The list of testing samples
+                The shape of X_test is (n_test_samples, n_features)
+
+        Returns:
+            y_pred(list of obj): The predicted target y values (parallel to X_test)
+        """
+        predictions = [tree.predict(X_test) for tree in self.forest]
+
+        for pred in predictions:
+            print(pred[:10])
+        
+        print()
+
+        # Use simple majority voting to predict classes using the M decision trees over the test set.
+        y_pred = []
+        for index in range(len(X_test)):
+            X_predictions = [predictions[i][index] for i in range(len(predictions))]
+            y_pred.append(myutils.get_most_frequent(X_predictions))
+        
+        return y_pred
