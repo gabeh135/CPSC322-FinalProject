@@ -176,3 +176,31 @@ def discretize_ranking(rating):
     else:
         ski_ranking = "very high"
     return ski_ranking
+
+def shuffle(x, y=None, random_state=None):
+    """Shuffles data for randomized sampling
+
+    Args:
+        x(list): list in need of shuffling
+        y(list): list if wanting to shuffle in parallel to x
+        random_state(int): seed for np.random
+    
+    Returns:
+        randomized_x(list): x after randomized shuffling
+        randomized_y(list): y after randomized shuffling, 
+            parallel to randomized_X
+    """
+    if random_state is not None:
+        np.random.seed(random_state)
+    randomized_x = x[:]
+    if y is not None:
+        randomized_y = y[:]
+    else:
+        randomized_y = None
+    for i in range(len(x)):
+        # pick an index to swap
+        j = np.random.randint(0, len(x)) # random int in [0,n)
+        randomized_x[i], randomized_x[j] = randomized_x[j], randomized_x[i]
+        if y is not None:
+            randomized_y[i], randomized_y[j] = randomized_y[j], randomized_y[i]
+    return randomized_x, randomized_y
