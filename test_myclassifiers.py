@@ -2,7 +2,6 @@
 """test_myclassifiers.py
 
 @author gabeh135
-Note: do not modify this file
 """
 import numpy as np
 
@@ -468,8 +467,6 @@ def test_decision_tree_classifier_fit():
     y_train_iphone = ["no", "no", "yes", "yes", "yes", "no", "yes", "no", "yes", "yes", "yes", "yes", "yes", "no", "yes"]
     iphone_clf = MyDecisionTreeClassifier()
     iphone_clf.fit(X_train_iphone, y_train_iphone)
-
-    print(iphone_clf.tree)
 
     assert iphone_clf.tree ==   ["Attribute", "att0",
                                     ["Value", 1, 

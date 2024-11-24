@@ -12,6 +12,7 @@ import numpy as np
 
 def randomize_in_place(alist, parallel_list=None):
     """Randomizes given list(s) in place.
+
     Args:
         alist(list): given list
         parallel_list(list): list parallel to alist if given
@@ -27,9 +28,11 @@ def randomize_in_place(alist, parallel_list=None):
 def compute_euclidean_distance(v1, v2):
     """Computes the euclidean distance between
     the points of two lists.
+
     Args:
         v1(list of numeric vals): the first list of points
         v2(list of numeric vals): the second list of points
+
     Returns:
         int: the euclidean distance between the lists
     """
@@ -37,9 +40,11 @@ def compute_euclidean_distance(v1, v2):
 
 def compute_categorical_distance(v1, v2):
     """Computes the distance between two categorical lists.
+
     Args:
         v1(list of categorical vals): the first list of points
         v2(list ofcategorical vals): the second list of points
+
     Returns:
         int: the distance between the lists
     """
@@ -47,8 +52,10 @@ def compute_categorical_distance(v1, v2):
 
 def get_frequencies(values):
     """Returns the frequencies of values in a list.
+
     Args:
         values(list): list of values to compute
+
     Returns:
         list: unique values in given list
         list: parallel list containing counts of values
@@ -60,8 +67,10 @@ def get_frequencies(values):
 
 def get_most_frequent(values):
     """Returns the the most frequent value in a list.
+
     Args:
         values(list): list of lists to compute
+
     Returns:
         str: the most frequent value
     """
@@ -70,8 +79,10 @@ def get_most_frequent(values):
 
 def all_same_class(instances):
     """Determines whether the given instances are all of the same class
+
     Args:
         instances(list of list): list of instances
+
     Returns:
         bool: whether the instances all have the same class
     """
@@ -84,9 +95,11 @@ def all_same_class(instances):
 
 def compute_partition_entropies(instances, partitions):
     """Computes the entropies for the given partitions
+
     Args:
         instances(list of list): list of instances
         partitions(dictionary of list of lists): the partitions to compute
+
     Returns:
         list: the entropies of the instances
     """
@@ -99,6 +112,70 @@ def compute_partition_entropies(instances, partitions):
         entropies.append((len(partition) / len(instances)) * partition_entropy)
 
     return entropies
+
+def compute_random_subset(values, num_values):
+    """Selects a random subsets of length N from a list of values.
+
+    Args:
+        values(list): List of values to select from.
+        num_values(int): How many to choose.
+
+    Returns:
+        list: The random subset.
+    """
+    values_copy = values.copy()
+    np.random.shuffle(values_copy)
+    return values_copy[:num_values]
+
+def select_top_elements(elements, values, top_n):
+    """Selects the top N elements based on their associated values.
+
+    Args:
+        elements(list): List of elements to select from
+        values(list): List of values corresponding to the elements
+        n(int): Number of top elements to select
+
+    Returns:
+        list: the indexes of the top n elements
+    """
+    top_indices = sorted(range(len(values)), key=lambda i: values[i], reverse=True)[:top_n]
+    return sorted(top_indices)
+
+def discretize_ranking(rating):
+    """Discretizer function classifying ski resort elo rating.
+
+    Args:
+        rating(numeric val): elo ranking of the ski resort
+
+    Returns:
+        int: ski resort ranking
+
+    Note: The splits are found by creating percentiles from the difference of the maximum value (1311), 
+        and the minimum value (800).
+    """
+    # maximum elo value is 1311, minimum is 800. R
+    # <= 5%
+    if rating <= 825:
+        ski_ranking = "very low"
+    # 5% - 15%
+    elif rating < 875:
+        ski_ranking = "low"
+    # 15% - 35%
+    elif rating < 975:
+        ski_ranking = "below average"
+    # 35% - 65%
+    elif rating < 1125:
+        ski_ranking = "average"
+    # 65% - 85%
+    elif rating < 1225:
+        ski_ranking = "above average"
+    # 85% - 95%
+    elif rating < 1275:
+        ski_ranking = "high"
+    # >= 95%
+    else:
+        ski_ranking = "very high"
+    return ski_ranking
 
 def shuffle(x, y=None, random_state=None):
     """Shuffles data for randomized sampling
