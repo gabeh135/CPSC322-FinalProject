@@ -155,22 +155,22 @@ def discretize_ranking(rating):
     """
     # maximum elo value is 1311, minimum is 800. R
     # <= 5%
-    if rating <= 825:
+    if rating <= 818.7:
         ski_ranking = "very low"
     # 5% - 15%
-    elif rating < 875:
+    elif rating < 831.2:
         ski_ranking = "low"
     # 15% - 35%
-    elif rating < 975:
+    elif rating < 856:
         ski_ranking = "below average"
     # 35% - 65%
-    elif rating < 1125:
+    elif rating < 901.8:
         ski_ranking = "average"
     # 65% - 85%
-    elif rating < 1225:
+    elif rating < 961.43:
         ski_ranking = "above average"
     # 85% - 95%
-    elif rating < 1275:
+    elif rating < 1026.355:
         ski_ranking = "high"
     # >= 95%
     else:
