@@ -154,9 +154,7 @@ def discretize_ranking(rating):
         and the minimum value (800).
     """
     # maximum elo value is 1311, minimum is 800.
-    if rating <= 818.7:
-        ski_ranking = "very low"
-    elif rating < 831.2:
+    if rating < 831.2:
         ski_ranking = "low"
     elif rating < 856:
         ski_ranking = "below average"
@@ -164,11 +162,79 @@ def discretize_ranking(rating):
         ski_ranking = "average"
     elif rating < 961.43:
         ski_ranking = "above average"
-    elif rating < 1026.355:
-        ski_ranking = "high"
     else:
-        ski_ranking = "very high"
+        ski_ranking = "high"
     return ski_ranking
+
+def discretize_elevation(elevation):
+    """Discretizer function for ski resort
+        elevation_top_m attribute
+   
+    Args:
+        elevation(numeric val): elevation_top_m value
+
+    Returns:
+        string: elevation_top_m rank
+
+    Note: Splits based on 20th, 40th, 60th, and 80th percentiles
+    """
+    if elevation <= 490.6:
+        elev_rank = "low"
+    elif elevation < 840.2:
+        elev_rank = "below average"
+    elif elevation < 1260:
+        elev_rank = "average"
+    elif elevation < 1912:
+        elev_rank = "above average"
+    else:
+        elev_rank = "high"
+    return elev_rank
+
+def discretize_num_slopes(count):
+    """Discretizer function for ski resort
+        number_of_slopes attribute
+   
+    Args:
+        count(numeric val): number_of_sloopes value
+
+    Returns:
+        string: slopes rank
+
+    Note: Splits based on 25th, 50th, and 75th percentiles
+    """
+    if count <= 1:
+        slope_rank = "low"
+    elif count < 3:
+        slope_rank = "low average"
+    elif count < 12:
+        slope_rank = "high average"
+    else:
+        slope_rank = "high"
+    return slope_rank
+
+def discretize_snowfall(snowfall):
+    """Discretizer function for ski resort
+        annual_snowfall_cm attribute
+   
+    Args:
+        snowfall(numeric val): annual_snowfall_cm value
+
+    Returns:
+        string: snowfall rank
+
+    Note: Splits based on 20th, 40th, 60th, 70th, and 80th percentiles
+    """
+    if snowfall <= 100:
+        snowfall_rank = "low"
+    elif snowfall < 150:
+        snowfall_rank = "below average"
+    elif snowfall < 250:
+        snowfall_rank = "average"
+    elif snowfall < 350:
+        snowfall_rank = "above average"
+    else:
+        snowfall_rank = "high"
+    return snowfall_rank
 
 def shuffle(x, y=None, random_state=None):
     """Shuffles data for randomized sampling
