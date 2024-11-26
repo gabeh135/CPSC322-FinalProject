@@ -57,6 +57,26 @@ class MyPyTable:
         """
         return len(self.data), len(self.column_names)
 
+    def get_frequencies(self, col_name):
+        """Returns the frequencies of column values in the table for
+            the specified column.
+
+        Args:
+            col_name(str): name of the column containing wanted data
+
+        Returns:
+            list: the values of unique columns
+            list: the respective counts to unique_col_values
+        """
+        col = self.get_column(col_name)
+        unique_col_values = sorted(list(set(col)))
+
+        counts = []
+        for val in unique_col_values:
+            counts.append(col.count(val))
+
+        return unique_col_values, counts
+
     def get_index(self, column_name):
         """Computes the index of a given column name.
 
