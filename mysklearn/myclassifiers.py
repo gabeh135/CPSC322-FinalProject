@@ -535,7 +535,12 @@ class MyRandomForestClassifier:
 
     def fit(self, X_train, y_train, n_samples, m_classifiers, subset_size):
         # Generate a random stratified test set.
-        X_remainder, X_test, y_remainder, y_test = myevaluation.stratified_train_test_split(X_train, y_train, test_size=0.33, random_state=0, shuffle=True)
+        folds = myevaluation.stratified_kfold_split(X_train, y_train, n_splits=3, random_state=0, shuffle=True)
+        train_indexes, test_indexes = folds[0]
+
+        X_remainder, X_test = [X_train[i] for i in range(len(X_train)) if i in train_indexes], [X_train[i] for i in range(len(X_train)) if i in test_indexes]
+        y_remainder, y_test = [y_train[i] for i in range(len(y_train)) if i in train_indexes], [y_train[i] for i in range(len(y_train)) if i in test_indexes]
+        # X_remainder, X_test, y_remainder, y_test = myevaluation.stratified_train_test_split(X_train, y_train, test_size=0.33, random_state=0, shuffle=True)
 
         # Generate N decision trees using bootstrapping over the remainder set.
         trees = []
@@ -570,11 +575,6 @@ class MyRandomForestClassifier:
             y_pred(list of obj): The predicted target y values (parallel to X_test)
         """
         predictions = [tree.predict(X_test) for tree in self.forest]
-
-        for pred in predictions:
-            print(pred[:10])
-        
-        print()
 
         # Use simple majority voting to predict classes using the M decision trees over the test set.
         y_pred = []
