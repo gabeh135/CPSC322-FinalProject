@@ -225,7 +225,7 @@ if __name__ == "__main__":
     # header, tree = load_model()
     # print(header)
     # print(tree)
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(host="0.0.0.0", port=5001, debug=False)
     # TODO: when deploy app to "production", set debug=False
     # and check host and port values
 
