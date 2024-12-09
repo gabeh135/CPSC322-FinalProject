@@ -530,10 +530,13 @@ class MyRandomForestClassifier:
         Terminology: instance = sample = row and attribute = feature = column
     """
 
-    def init(self):
+    def __init__(self, n_samples=3, m_classifiers=2, subset_size=1):
         self.forest = None
+        self.n_samples = n_samples
+        self.m_classifiers = m_classifiers
+        self.subset_size = subset_size
 
-    def fit(self, X_train, y_train, n_samples, m_classifiers, subset_size):
+    def fit(self, X_train, y_train):
         # Generate a random stratified test set.
         folds = myevaluation.stratified_kfold_split(X_train, y_train, n_splits=3, random_state=0, shuffle=True)
         train_indexes, test_indexes = folds[0]
@@ -545,20 +548,20 @@ class MyRandomForestClassifier:
         # Generate N decision trees using bootstrapping over the remainder set.
         trees = []
         accuracies = []
-        for _ in range(n_samples):
+        for _ in range(self.n_samples):
             X_train, X_validate, y_train, y_validate = myevaluation.bootstrap_sample(X_remainder, y_remainder)
 
             clf = MyDecisionTreeClassifier()
 
             # At each node, decision trees by randomly selecting F of the remaining attributes as candidates to partition on.
-            clf.fit(X_train, y_train, subset_size=subset_size)
+            clf.fit(X_train, y_train, subset_size=self.subset_size)
             y_pred = clf.predict(X_validate)
             accuracy = myevaluation.accuracy_score(y_validate, y_pred)
             trees.append(clf)
             accuracies.append(accuracy)
 
         # Select the M most accurate of the N decision trees using the corresponding validation sets.
-        top_indexes = myutils.select_top_elements(trees, accuracies, m_classifiers)
+        top_indexes = myutils.select_top_elements(trees, accuracies, self.m_classifiers)
         self.forest = [trees[i] for i in top_indexes]
 
         # Return the test set for future evaluation

@@ -11,6 +11,7 @@ machine learning algorithm evaluation methods.
 import numpy as np # use numpy's random number generation
 from tabulate import tabulate
 from mysklearn import myutils
+import matplotlib.pyplot as plt
 
 def train_test_split(X, y, test_size=0.33, random_state=None, shuffle=True):
     """Split dataset into train and test sets based on a test set size.
@@ -598,7 +599,7 @@ def accuracy_metrics(y_true, y_pred, labels=None, pos_label=None):
 
     return true_p, false_p, true_n, false_n
 
-def display_cross_val(X, y, clf, labels, pos_label, matrix_headers, discretizer=None, n_splits=10, shuffle=True, stratify=True):
+def display_cross_val(X, y, classifier, matrix_headers, discretizer=None, n_splits=10, shuffle=True, stratify=True):
     """
     Computes and displays accuracy metrics for the given classifier using k-fold cross validation
 
@@ -607,6 +608,7 @@ def display_cross_val(X, y, clf, labels, pos_label, matrix_headers, discretizer=
         y(list of obj): The target y values (parallel to X)
             Default is None (in this case, the calling code only wants to sample X)
         classifier(method): Classifier being evaluated
+        matrix_headers(list): headers to fit confusion matrix
         discretizer(method): Method used to discretize classifier results
         n_splits(int): Number of kfold splits
         random_state(int): integer used for seeding a random number generator for reproducible results
@@ -620,17 +622,27 @@ def display_cross_val(X, y, clf, labels, pos_label, matrix_headers, discretizer=
         error(float): average error over k train test splits
     """
     actual, pred, accuracy, error = cross_val_predict\
-        (X, y, clf, discretizer=discretizer, n_splits=n_splits, shuffle=shuffle, stratify=stratify)
-
-    precision = binary_precision_score(actual, pred, labels, pos_label)
-    recall = binary_recall_score(actual, pred, labels, pos_label)
-    f1 = binary_f1_score(actual, pred, labels, pos_label)
+        (X, y, classifier, discretizer=discretizer, n_splits=n_splits, shuffle=shuffle, stratify=stratify)
 
     print(f"Accuracy: {accuracy}, Error Rate: {error}")
     print()
 
-    print(f"Precision: {precision}, Recall: {recall}, F1: {f1}")
-    print()
-
-    matrix = confusion_matrix(actual, pred, matrix_headers[1:3])
+    matrix = confusion_matrix(actual, pred, matrix_headers[1:6])
     print(tabulate_confusion_matrix(matrix, headers=matrix_headers))
+
+    return actual, pred, accuracy, error
+
+def display_distributions(pred, classifier_name):
+    display_order = [3, 0, 1, 2, 4]
+
+    values, counts = myutils.get_frequencies(pred)
+    ordered_values = [values[i] for i in display_order]
+    ordered_counts = [counts[i] for i in display_order]
+
+    plt.figure()
+    plt.bar(ordered_values, ordered_counts)
+    plt.xlabel("ELO Rating")
+    plt.ylabel("Count")
+    plt.title(f"Distribution of {classifier_name} Predictions")
+    plt.xticks(rotation=45, ha="right")
+    plt.show()

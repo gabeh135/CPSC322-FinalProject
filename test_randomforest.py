@@ -78,10 +78,10 @@ def test_stratified_train_test_split():
         assert y_test.count(value) == y_test_solution.count(value)
 
 def test_discretize_ranking():
-    ratings = [1311, 800, 972, 1000, 1200]
+    ratings = [1311, 800, 900, 870, 850]
     ranks = [myutils.discretize_ranking(rating) for rating in ratings]
 
-    assert ranks == ["very high", "very low", "below average", "average", "above average"]
+    assert ranks == ["very high", "very low", "high", "average", "low"]
 
 def test_random_forest_classifier_fit():
     X_train_interview = [
@@ -106,8 +106,8 @@ def test_random_forest_classifier_fit():
     M = 3
     F = 2
 
-    interview_clf = MyRandomForestClassifier()
-    interview_clf.fit(X_train_interview, y_train_interview, N, M, F)
+    interview_clf = MyRandomForestClassifier(n_samples=N, m_classifiers=M, subset_size=F)
+    interview_clf.fit(X_train_interview, y_train_interview)
 
     assert len(interview_clf.forest) == M
 
@@ -115,44 +115,37 @@ def test_random_forest_classifier_fit():
     assert interview_clf.forest[0].tree != interview_clf.forest[2].tree
     assert interview_clf.forest[1].tree != interview_clf.forest[2].tree
 
-def test_random_forest_classifier_predict():
-    # create three decision tree classifiers using a random subsetting and the interview set
-    # make a random forest equal to this
+# X_train_interview = [
+#     ["Senior", "Java", "no", "no"],
+#     ["Senior", "Java", "no", "yes"],
+#     ["Mid", "Python", "no", "no"],
+#     ["Junior", "Python", "no", "no"],
+#     ["Junior", "R", "yes", "no"],
+#     ["Junior", "R", "yes", "yes"],
+#     ["Mid", "R", "yes", "yes"],
+#     ["Senior", "Python", "no", "no"],
+#     ["Senior", "R", "yes", "no"],
+#     ["Junior", "Python", "yes", "no"],
+#     ["Senior", "Python", "yes", "yes"],
+#     ["Mid", "Python", "no", "yes"],
+#     ["Mid", "Java", "yes", "no"],
+#     ["Junior", "Python", "no", "yes"]
+# ]
+# y_train_interview = ["False", "False", "True", "True", "True", "False", "True", "False", "True", "True", "True", "True", "True", "False"]
+# X_test_iphone = [[2, 2, "fair"], [1, 1, "excellent"]]
 
-    # test that the majority of the three classifiers equals decision predict.
-    assert False is True
+# clf_1 = RandomForestClassifier(n_samples=N, m_classifiers=M, subset_size=F)
+# clf_1.fit(X_train_interview, y_train_interview)
+# pred_1 = clf_1.predict(X_test_iphone)
+# print(pred_1)
 
-X_train_interview = [
-    ["Senior", "Java", "no", "no"],
-    ["Senior", "Java", "no", "yes"],
-    ["Mid", "Python", "no", "no"],
-    ["Junior", "Python", "no", "no"],
-    ["Junior", "R", "yes", "no"],
-    ["Junior", "R", "yes", "yes"],
-    ["Mid", "R", "yes", "yes"],
-    ["Senior", "Python", "no", "no"],
-    ["Senior", "R", "yes", "no"],
-    ["Junior", "Python", "yes", "no"],
-    ["Senior", "Python", "yes", "yes"],
-    ["Mid", "Python", "no", "yes"],
-    ["Mid", "Java", "yes", "no"],
-    ["Junior", "Python", "no", "yes"]
-]
-y_train_interview = ["False", "False", "True", "True", "True", "False", "True", "False", "True", "True", "True", "True", "True", "False"]
-X_test_iphone = [[2, 2, "fair"], [1, 1, "excellent"]]
+# clf_2 = MyDecisionTreeClassifier()
+# clf_2.fit(X_train_interview, y_train_interview, 2)
+# pred_2 = clf_2.predict(X_test_iphone)
+# print(pred_2)
 
-clf_1 = MyDecisionTreeClassifier()
-clf_1.fit(X_train_interview, y_train_interview, 2)
-pred_1 = clf_1.predict(X_test_iphone)
-print(pred_1)
-
-clf_2 = MyDecisionTreeClassifier()
-clf_2.fit(X_train_interview, y_train_interview, 2)
-pred_2 = clf_2.predict(X_test_iphone)
-print(pred_2)
-
-clf_3 = MyDecisionTreeClassifier()
-clf_3.fit(X_train_interview, y_train_interview, 2)
-pred_3 = clf_3.predict(X_test_iphone)
-print(pred_3)
+# clf_3 = MyDecisionTreeClassifier()
+# clf_3.fit(X_train_interview, y_train_interview, 2)
+# pred_3 = clf_3.predict(X_test_iphone)
+# print(pred_3)
 

@@ -154,16 +154,16 @@ def discretize_ranking(rating):
         and the minimum value (800).
     """
     # maximum elo value is 1311, minimum is 800.
-    if rating < 831.2:
+    if rating < 837.96:
+        ski_ranking = "very low"
+    elif rating < 862.52:
         ski_ranking = "low"
-    elif rating < 856:
-        ski_ranking = "below average"
-    elif rating < 901.8:
+    elif rating < 891.58:
         ski_ranking = "average"
-    elif rating < 961.43:
-        ski_ranking = "above average"
-    else:
+    elif rating < 938.14:
         ski_ranking = "high"
+    else:
+        ski_ranking = "very high"
     return ski_ranking
 
 def discretize_elevation(elevation):
@@ -179,15 +179,15 @@ def discretize_elevation(elevation):
     Note: Splits based on 20th, 40th, 60th, and 80th percentiles
     """
     if elevation <= 490.6:
-        elev_rank = "low"
+        elev_rank = "very low"
     elif elevation < 840.2:
-        elev_rank = "below average"
+        elev_rank = "low"
     elif elevation < 1260:
         elev_rank = "average"
     elif elevation < 1912:
-        elev_rank = "above average"
-    else:
         elev_rank = "high"
+    else:
+        elev_rank = "very high"
     return elev_rank
 
 def discretize_num_slopes(count):
@@ -198,7 +198,7 @@ def discretize_num_slopes(count):
         count(numeric val): number_of_sloopes value
 
     Returns:
-        string: slopes rank
+        string: number_of_slopes rank
 
     Note: Splits based on 25th, 50th, and 75th percentiles
     """
@@ -220,21 +220,93 @@ def discretize_snowfall(snowfall):
         snowfall(numeric val): annual_snowfall_cm value
 
     Returns:
-        string: snowfall rank
+        string: annual_snowfall_cm rank
 
     Note: Splits based on 20th, 40th, 60th, 70th, and 80th percentiles
     """
     if snowfall <= 100:
-        snowfall_rank = "low"
+        snowfall_rank = "very low"
     elif snowfall < 150:
-        snowfall_rank = "below average"
+        snowfall_rank = "low"
     elif snowfall < 250:
         snowfall_rank = "average"
     elif snowfall < 350:
-        snowfall_rank = "above average"
-    else:
         snowfall_rank = "high"
+    else:
+        snowfall_rank = "very high"
     return snowfall_rank
+
+def discretize_elevation_difference(elevation):
+    """Discretizer function for ski resort
+        elevation_difference_m attribute
+   
+    Args:
+        elevation(numeric val): elevation_difference_m value
+
+    Returns:
+        string: elevation_difference_m rank
+
+    Note: Splits based on 20th, 40th, 60th, and 80th percentiles
+    """
+    if elevation <= 70:
+        elev_rank = "very low"
+    elif elevation < 145:
+        elev_rank = "low"
+    elif elevation < 298:
+        elev_rank = "average"
+    elif elevation < 610:
+        elev_rank = "high"
+    else:
+        elev_rank = "very high"
+    return elev_rank
+
+def discretize_slope_length(length):
+    """Discretizer function for ski resort
+        total_slope_length_km attribute
+   
+    Args:
+        length(numeric val): total_slope_length_km value
+
+    Returns:
+        string: total_slope_length_km rank
+
+    Note: Splits based on 25th, 50th, and 75th percentiles
+    """
+    if length <= 0.8:
+        slope_rank = "very low"
+    elif length <= 2.72:
+        slope_rank = "low"
+    elif length < 7.5:
+        slope_rank = "average"
+    elif length < 20:
+        slope_rank = "high"
+    else:
+        slope_rank = "very high"
+    return slope_rank
+
+def discretize_num_lifts(lifts):
+    """Discretizer function for ski resort
+        number_of_lifts attribute
+   
+    Args:
+        lifts(numeric val): number_of_lifts value
+
+    Returns:
+        string: number_of_lifts rank
+
+    Note: Splits based on 20th, 40th, 60th, and 80th percentiles
+    """
+    if lifts <= 1:
+        lift_rank = "very low"
+    elif lifts < 2:
+        lift_rank = "low"
+    elif lifts < 4:
+        lift_rank = "average"
+    elif lifts < 7:
+        lift_rank = "high"
+    else:
+        lift_rank = "very high"
+    return lift_rank
 
 def shuffle(x, y=None, random_state=None):
     """Shuffles data for randomized sampling
