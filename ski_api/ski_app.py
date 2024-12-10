@@ -44,7 +44,7 @@ def model_predict(instance, priors, posteriors):
 
     y_pred.append(max(probabilities, key=lambda key: probabilities[key]))
 
-    return y_pred
+    return y_pred[0]
 
 @app.route('/', methods = ['GET', 'POST'])
 def index():
@@ -58,29 +58,28 @@ def index():
         annual_snowfall = discretize_snowfall(float(request.form["snowfall"]))
 
         prediction = predict_ranking([top_elevation, elevation_difference, slope_length, number_lifts, number_slopes, annual_snowfall])
-    print("prediction:", prediction)
-    # goes into templates folder and finds given name
+
     return render_template("index.html", prediction=prediction)
 
-@app.route('/predict', methods=["GET"])
-def predict():
-    # lets parse the unseen instance values from the query string
-    # they are in the request object
-    top_elevation = discretize_elevation(float(request.args.get("top_elevation")))
-    elevation_difference = discretize_elevation_difference(float(request.args.get("elevation_diff")))
-    slope_length = discretize_slope_length(float(request.args.get("slope_length")))
-    number_lifts = discretize_num_lifts(float(request.args.get("lifts")))
-    number_slopes = discretize_num_slopes(float(request.args.get("number_slopes")))
-    annual_snowfall = discretize_snowfall(float(request.args.get("snowfall")))
+# @app.route('/predict', methods=["GET"])
+# def predict():
+#     # lets parse the unseen instance values from the query string
+#     # they are in the request object
+#     top_elevation = discretize_elevation(float(request.args.get("top_elevation")))
+#     elevation_difference = discretize_elevation_difference(float(request.args.get("elevation_diff")))
+#     slope_length = discretize_slope_length(float(request.args.get("slope_length")))
+#     number_lifts = discretize_num_lifts(float(request.args.get("lifts")))
+#     number_slopes = discretize_num_slopes(float(request.args.get("number_slopes")))
+#     annual_snowfall = discretize_snowfall(float(request.args.get("snowfall")))
 
-    prediction = model_predict([top_elevation, elevation_difference, slope_length, number_lifts, number_slopes, annual_snowfall])
+#     prediction = model_predict([top_elevation, elevation_difference, slope_length, number_lifts, number_slopes, annual_snowfall])
 
-    if prediction is not None:
-    # success!
-        result = {"prediction": prediction}
-        return jsonify(result), 200
-    else:
-        return "Error making prediction", 400
+#     if prediction is not None:
+#     # success!
+#         result = {"prediction": prediction}
+#         return jsonify(result), 200
+#     else:
+#         return "Error making prediction", 400
     
 def predict_ranking(instance):
     infile = open("ski_model.p", "rb")
@@ -238,7 +237,7 @@ if __name__ == "__main__":
     # header, tree = load_model()
     # print(header)
     # print(tree)
-    app.run(host="0.0.0.0", port=5001, debug=False)
+    app.run(host="0.0.0.0", port=5001, debug=True)
     # TODO: when deploy app to "production", set debug=False
     # and check host and port values
 

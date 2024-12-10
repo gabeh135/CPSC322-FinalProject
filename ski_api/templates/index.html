@@ -69,7 +69,7 @@
                     <img src="https://content.sportslogos.net/logos/31/691/full/pxl1fzxrw8lbt04ci2mo4kk0p.png" class="img-fluid mt-5" alt="">
                 </div>
                 <div class="col-lg-7 px-5 pt-5">
-                    <h1 class="font-weight-bodl py-3">Interview Predictor</h1>
+                    <h1 class="font-weight-bodl py-3">Ski Resort Rank Predicter</h1>
                         <form action="/" method="post">
                             <div class="form-row">
                                 <div class="col-lg-7">
@@ -106,7 +106,14 @@
                                     <button type="submit" width="" class="btn btn-outline-primary mt-3 mb-3 p-2 btn1">Predict Resort Rank</button>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-success mb-4 p-2 btn2">{{ prediction }}</button>
+
+                            <!-- {% if prediction %} -->
+                            <button type="button" class="btn btn-success mb-4 p-2 btn2">
+                                {{ prediction }}
+                            </button>
+                            <!-- {% else %}
+                            <button type="button" class="btn  mb-4 p-2 btn2"></button>
+                            {% endif %} -->
                         </form>
                  </div>
             </div>
