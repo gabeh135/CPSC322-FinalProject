@@ -26,7 +26,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Interview Well Prediction App</title>
+    <title>Ski Resort Rank Prediction App</title>
     <style>
         *{
             padding: 0;
@@ -73,47 +73,40 @@
                         <form action="/" method="post">
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <input type="number" placeholder="top_elevation" name="top_elevation" class="form-control my-1 p-2">
+                                    <input type="number" placeholder="top elevation(m)" name="top_elevation" class="form-control my-1 p-2">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <input type="number" placeholder="elevation_diff" name="elevation_diff" class="form-control my-1 p-2">
+                                    <input type="number" placeholder="elevation difference(m)" name="elevation_diff" class="form-control my-1 p-2">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <input type="number" placeholder="slope_length" name="slope_length" class="form-control my-1 p-2">
+                                    <input type="number" placeholder="total slope length(km)" name="slope_length" class="form-control my-1 p-2">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <input type="number" placeholder="lifts" name="lifts" class="form-control my-1 p-2">
+                                    <input type="number" placeholder="number of lifts" name="lifts" class="form-control my-1 p-2">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <input type="number" placeholder="number_slopes" name="number_slopes" class="form-control my-1 p-2">
+                                    <input type="number" placeholder="number of slopes" name="number_slopes" class="form-control my-1 p-2">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <input type="number" placeholder="snowfall" name="snowfall" class="form-control my-1 p-2">
+                                    <input type="number" placeholder="annual snowfall(cm)" name="snowfall" class="form-control my-1 p-2">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="col-lg-7">
-                                    <button type="submit" width="" class="btn btn-outline-primary mt-3 mb-3 p-2 btn1">Predict Interviewed Well!</button>
+                                    <button type="submit" width="" class="btn btn-outline-primary mt-3 mb-3 p-2 btn1">Predict Resort Rank</button>
                                 </div>
                             </div>
-                            {% if prediction|string() == "True"|string() %}
                             <button type="button" class="btn btn-success mb-4 p-2 btn2">{{ prediction }}</button>
-
-                            {% elif prediction|string() == "False"|string() %}
-                            <button type="button" class="btn btn-warning  mb-4 p-2 btn2">{{ prediction }}</button>
-                            {% else %}
-                            <button type="button" class="btn  mb-4 p-2 btn2"></button>
-                            {% endif %}
                         </form>
                  </div>
             </div>
