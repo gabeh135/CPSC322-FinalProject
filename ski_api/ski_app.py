@@ -1,5 +1,9 @@
+import os
 import pickle
-from flask import Flask, request, jsonify
+
+from flask import Flask
+from flask import render_template
+from flask import request, jsonify, redirect
 
 app = Flask(__name__)
 
@@ -10,10 +14,7 @@ def load_model():
         priors: priors of the Naive Bayes model
         posteriors: posteriors of the Naive Bayes model
     """
-    infile = open("ski_model.p", "rb")
-    priors, posteriors = pickle.load(infile)
-    infile.close()
-    return priors, posteriors
+
 
 def model_predict(instance, priors, posteriors):
     """Makes predictions for test instances in X_test.
@@ -45,38 +46,50 @@ def model_predict(instance, priors, posteriors):
 
     return y_pred
 
-@app.route("/")
+@app.route('/', methods = ['GET', 'POST'])
 def index():
-    # return content and status code
-    return "<h1>Welcome to the ski resort ranking app</h1>", 200
+    prediction = ""
+    if request.method == "POST":
+        top_elevation = discretize_elevation(float(request.form["top_elevation"]))
+        elevation_difference = discretize_elevation_difference(float(request.form["elevation_diff"]))
+        slope_length = discretize_slope_length(float(request.form["slope_length"]))
+        number_lifts = discretize_num_lifts(float(request.form["lifts"]))
+        number_slopes = discretize_num_slopes(float(request.form["number_slopes"]))
+        annual_snowfall = discretize_snowfall(float(request.form["snowfall"]))
 
+        prediction = predict_ranking([top_elevation, elevation_difference, slope_length, number_lifts, number_slopes, annual_snowfall])
+    print("prediction:", prediction)
+    # goes into templates folder and finds given name
+    return render_template("index.html", prediction=prediction)
 
-# ski_X = ski_dataset.get_columns(["elevation_top_m", "elevation_difference_m", "total_slope_length_km", "number_of_lifts", "number_of_slopes", "annual_snowfall_cm"])
-# ski_y = ski_dataset.get_column("rating")
-# lets add a route for the /predict endpoint
-@app.route("/predict")
+@app.route('/predict', methods=["GET"])
 def predict():
     # lets parse the unseen instance values from the query string
     # they are in the request object
+    top_elevation = discretize_elevation(float(request.args.get("top_elevation")))
+    elevation_difference = discretize_elevation_difference(float(request.args.get("elevation_diff")))
+    slope_length = discretize_slope_length(float(request.args.get("slope_length")))
+    number_lifts = discretize_num_lifts(float(request.args.get("lifts")))
+    number_slopes = discretize_num_slopes(float(request.args.get("number_slopes")))
+    annual_snowfall = discretize_snowfall(float(request.args.get("snowfall")))
+
+    prediction = model_predict([top_elevation, elevation_difference, slope_length, number_lifts, number_slopes, annual_snowfall])
+
+    if prediction is not None:
+    # success!
+        result = {"prediction": prediction}
+        return jsonify(result), 200
+    else:
+        return "Error making prediction", 400
+    
+def predict_ranking(instance):
+    infile = open("ski_model.p", "rb")
+    priors, posteriors = pickle.load(infile)
+    infile.close()
     try:
-        top_elevation = discretize_elevation(float(request.args.get("top_elevation")))
-        elevation_difference = discretize_elevation_difference(float(request.args.get("elevation_diff")))
-        slope_length = discretize_slope_length(float(request.args.get("slope_length")))
-        number_lifts = discretize_num_lifts(float(request.args.get("lifts")))
-        number_slopes = discretize_num_slopes(float(request.args.get("number_slopes")))
-        annual_snowfall = discretize_snowfall(float(request.args.get("snowfall")))
-
-        priors, posteriors = load_model()
-        instance = [top_elevation, elevation_difference, slope_length, number_lifts, number_slopes, annual_snowfall]
-
-        # lets make a prediction!
-        pred = model_predict(instance, priors, posteriors)
-        if pred is not None:
-            return jsonify({"prediction": pred}), 200
-        # something went wrong!!
-        return "Error making a prediction", 400
-    except ValueError:
-        return "Enter valid parameters", 400
+        return model_predict(instance, priors, posteriors)
+    except:
+        return None
 
 def discretize_elevation(elevation):
     """Discretizer function for ski resort
