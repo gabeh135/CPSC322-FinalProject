@@ -335,3 +335,36 @@ def shuffle(x, y=None, random_state=None):
         if y is not None:
             randomized_y[i], randomized_y[j] = randomized_y[j], randomized_y[i]
     return randomized_x, randomized_y
+
+def calculate_correlation(x, y):
+    """calculates the correlation coeficient between two lists
+    
+    Args:
+        x(list of numeric): first list
+        y(list of numeric): second list
+
+    Returns:
+        correlation(float): correlation coefficient generated
+    """
+    corr_matrix = np.corrcoef(x, y)
+    return corr_matrix[0, 1]
+
+def compute_slope_intercept(x, y):
+    """Computes m and b for a linear regression.
+
+    Args:
+        x(list of int or float): list of independent values
+        y(list of int or float): list of dependent values
+    
+    Returns:
+        m(float): slope coefficient for linear regression
+        b(float): slope interscept for linear regression
+    """
+    mean_x = sum(x)/len(x)
+    mean_y = sum(y)/len(y)
+    num = sum([(x[i] - mean_x) * (y[i]- mean_y) for i in range(len(x))])
+    den = sum([(x[i] - mean_x) ** 2 for i in range(len(x))])
+    m = num / den
+    # y = mx + b
+    b = mean_y - m * mean_x
+    return m, b
