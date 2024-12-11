@@ -632,7 +632,7 @@ def display_cross_val(X, y, classifier, matrix_headers, discretizer=None, n_spli
 
     return actual, pred, accuracy, error
 
-def display_distributions(pred, classifier_name):
+def display_distributions(pred, classifier_name, figure_num):
     display_order = [3, 0, 1, 2, 4]
 
     values, counts = myutils.get_frequencies(pred)
@@ -643,6 +643,6 @@ def display_distributions(pred, classifier_name):
     plt.bar(ordered_values, ordered_counts)
     plt.xlabel("ELO Rating")
     plt.ylabel("Count")
-    plt.title(f"Distribution of {classifier_name} Predictions")
+    plt.title(f"Figure {figure_num} Distribution of {classifier_name} Predictions")
     plt.xticks(rotation=45, ha="right")
     plt.show()
